@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Verifikasi CPD MBOT — verifikasi.semekar.com</title>
+  <meta name="description" content="Halaman verifikasi rasmi untuk verifikasi.semekar.com" />
+
+  <!-- Preconnect & Google Fonts: Plus Jakarta Sans & Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700&display=swap"
+    rel="stylesheet"
+  />
+
+  <!-- Tailwind CSS CDN for responsive layout and utility styling -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!--
+    THEME CONFIGURATION (:root CSS Variables)
+    ==========================================================================
+    Adjust these variables to match the exact brand palette and typography
+    of semekar.com without modifying the HTML structure.
+  -->
+  <style>
+    :root {
+      --bg-color: #f8fafc;
+      --card-bg: #ffffff;
+      --primary-color: #0f766e;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --border-color: #e2e8f0;
+      --font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    /* Base typography and background bindings using theme variables */
+    html,
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      font-family: var(--font-family);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* Refined corporate card styling */
+    .verification-card {
+      background-color: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-top: 3px solid var(--primary-color);
+      box-shadow:
+        0 1px 2px rgba(15, 23, 42, 0.04),
+        0 12px 32px -8px rgba(15, 23, 42, 0.07);
+    }
+
+    /* Subtle entrance transition for refined polish */
+    @keyframes cardFadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(6px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .animate-card {
+      animation: cardFadeIn 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+  </style>
+</head>
+
+<body class="min-h-screen w-full flex items-center justify-center px-5 py-10 sm:px-8 overflow-x-hidden selection:bg-slate-200">
+
+  <!-- Main Verification Card Container -->
+  <main class="w-full max-w-md mx-auto">
+    <section
+      aria-label="Maklumat Verifikasi"
+      class="verification-card animate-card w-full rounded-2xl px-7 py-12 sm:px-11 sm:py-16 text-center"
+    >
+      <!-- Strictly ONLY the three required lines of text -->
+      <div class="flex flex-col items-center justify-center">
+        <!-- Line 1: Prominent Primary Name -->
+        <p
+          id="verify-name"
+          class="text-2xl sm:text-[1.75rem] font-bold tracking-tight leading-snug break-words"
+          style="color: var(--text-main);"
+        >Zainal bin Mohd Zabir</p>
+
+        <!-- Line 2: Registration / Reference ID with refined letter-spacing & accent color -->
+        <p
+          id="verify-id"
+          class="mt-3.5 text-sm sm:text-base font-semibold tracking-[0.18em] uppercase"
+          style="color: var(--primary-color);"
+        >PT22100508</p>
+
+        <!-- Subtle hairline spacer divider (purely visual, no text) -->
+        <div
+          aria-hidden="true"
+          class="w-12 h-px my-5"
+          style="background-color: var(--border-color);"
+        ></div>
+
+        <!-- Line 3: Refined Secondary Verification Purpose -->
+        <p
+          id="verify-purpose"
+          class="text-sm sm:text-[0.95rem] font-medium tracking-wide"
+          style="color: var(--text-muted);"
+        >Verifikasi CPD MBOT</p>
+      </div>
+    </section>
+  </main>
+
+  <!--
+    GOOGLE SHEETS CSV DATA LOADER
+    ==========================================================================
+    Setup Instructions:
+    1. Open your Google Sheet and go to: File > Share > Publish to web.
+    2. Select the target sheet tab and choose "Comma-separated values (.csv)".
+    3. Copy the published URL and paste it into SHEET_CSV_URL below.
+
+    Supported Sheet Layouts:
+    - Layout A (Recommended - Header Row + Data Row):
+        Row 1: Nama | No_Pendaftaran | Tujuan
+        Row 2: Zainal bin Mohd Zabir | PT22100508 | Verifikasi CPD MBOT
+    - Layout B (Key-Value 2 Columns):
+        Row 1: Nama | Zainal bin Mohd Zabir
+        Row 2: No_Pendaftaran | PT22100508
+        Row 3: Tujuan | Verifikasi CPD MBOT
+    - Layout C (Single Column, 3 Rows):
+        Row 1: Zainal bin Mohd Zabir
+        Row 2: PT22100508
+        Row 3: Verifikasi CPD MBOT
+
+    GitHub Pages Custom Domain Note:
+    - Push this file as `index.html` to your GitHub repository.
+    - Add a `CNAME` file containing `verifikasi.semekar.com` in the repo root,
+      and point the `verifikasi` CNAME DNS record to `<username>.github.io`.
+  -->
+  <script>
+    (function () {
+      'use strict';
+
+      /**
+       * Paste your published Google Sheets CSV URL here.
+       * Leave empty ('') to immediately display the built-in fallback values.
+       */
+      const SHEET_CSV_URL = '';
+
+      /**
+       * Timeout duration (in milliseconds) for fetching remote CSV data
+       * so slow connections gracefully preserve the immediate fallback text.
+       */
+      const FETCH_TIMEOUT_MS = 6000;
+
+      /**
+       * Built-in fallback values rendered immediately on page load.
+       */
+      const FALLBACK_DATA = Object.freeze({
+        name: 'Zainal bin Mohd Zabir',
+        id: 'PT22100508',
+        purpose: 'Verifikasi CPD MBOT'
+      });
+
+      /**
+       * Safely parses an RFC 4180 compliant CSV string into a 2D array of strings.
+       * Handles quoted values, commas inside quotes, escaped quotes (""), and CRLF/LF.
+       *
+       * @param {string} csvText - Raw CSV response text.
+       * @returns {string[][]} Parsed rows and cells.
+       */
+      function parseCSV(csvText) {
+        const rows = [];
+        let currentRow = [];
+        let currentCell = '';
+        let insideQuotes = false;
+
+        // Strip UTF-8 BOM if present
+        const text = csvText.replace(/^\uFEFF/, '');
+
+        for (let i = 0; i < text.length; i++) {
+          const char = text[i];
+          const nextChar = text[i + 1];
+
+          if (insideQuotes) {
+            if (char === '"' && nextChar === '"') {
+              // Escaped double quote inside a quoted field
+              currentCell += '"';
+              i++;
+            } else if (char === '"') {
+              insideQuotes = false;
+            } else {
+              currentCell += char;
+            }
+          } else {
+            if (char === '"') {
+              insideQuotes = true;
+            } else if (char === ',') {
+              currentRow.push(currentCell.trim());
+              currentCell = '';
+            } else if (char === '\r' && nextChar === '\n') {
+              currentRow.push(currentCell.trim());
+              rows.push(currentRow);
+              currentRow = [];
+              currentCell = '';
+              i++;
+            } else if (char === '\n' || char === '\r') {
+              currentRow.push(currentCell.trim());
+              rows.push(currentRow);
+              currentRow = [];
+              currentCell = '';
+            } else {
+              currentCell += char;
+            }
+          }
+        }
+
+        // Push final cell/row if non-empty
+        if (currentCell.length > 0 || currentRow.length > 0) {
+          currentRow.push(currentCell.trim());
+          rows.push(currentRow);
+        }
+
+        // Filter out completely empty rows
+        return rows.filter(function (row) {
+          return row.some(function (cell) {
+            return cell !== '';
+          });
+        });
+      }
+
+      /**
+       * Extracts the 3 verification fields (name, id, purpose) from parsed CSV rows.
+       * Automatically adapts to horizontal table, key-value, or single-column layouts.
+       *
+       * @param {string[][]} rows - 2D array returned by parseCSV().
+       * @returns {{ name: string, id: string, purpose: string } | null}
+       */
+      function extractVerificationData(rows) {
+        if (!Array.isArray(rows) || rows.length === 0) {
+          return null;
+        }
+
+        // Layout A: Header row + Data row with at least 3 columns
+        if (rows.length >= 2 && rows[1].length >= 3) {
+          const dataRow = rows[1];
+          if (dataRow[0] && dataRow[1] && dataRow[2]) {
+            return {
+              name: dataRow[0],
+              id: dataRow[1],
+              purpose: dataRow[2]
+            };
+          }
+        }
+
+        // Layout B: Single row with 3 columns (no header)
+        if (rows.length === 1 && rows[0].length >= 3) {
+          const singleRow = rows[0];
+          if (singleRow[0] && singleRow[1] && singleRow[2]) {
+            return {
+              name: singleRow[0],
+              id: singleRow[1],
+              purpose: singleRow[2]
+            };
+          }
+        }
+
+        // Layout C: 3 rows of Key-Value pairs (2 columns) OR Single Column (1 column)
+        if (rows.length >= 3) {
+          const isKeyValue = rows[0].length >= 2 && rows[1].length >= 2 && rows[2].length >= 2;
+          const colIndex = isKeyValue ? 1 : 0;
+
+          const name = rows[0][colIndex];
+          const id = rows[1][colIndex];
+          const purpose = rows[2][colIndex];
+
+          if (name && id && purpose) {
+            return { name: name, id: id, purpose: purpose };
+          }
+        }
+
+        return null;
+      }
+
+      /**
+       * Safely renders the three text fields into the DOM using textContent (XSS-safe).
+       *
+       * @param {{ name: string, id: string, purpose: string }} data
+       */
+      function renderVerificationData(data) {
+        const nameEl = document.getElementById('verify-name');
+        const idEl = document.getElementById('verify-id');
+        const purposeEl = document.getElementById('verify-purpose');
+
+        if (nameEl && data.name) {
+          nameEl.textContent = data.name;
+        }
+        if (idEl && data.id) {
+          idEl.textContent = data.id;
+        }
+        if (purposeEl && data.purpose) {
+          purposeEl.textContent = data.purpose;
+        }
+      }
+
+      /**
+       * Fetches CSV data from Google Sheets and updates the card if valid.
+       * Silently keeps the exact fallback texts if SHEET_CSV_URL is empty or fails.
+       */
+      async function loadFromGoogleSheet() {
+        const url = typeof SHEET_CSV_URL === 'string' ? SHEET_CSV_URL.trim() : '';
+
+        // If no URL is configured, retain the immediate fallback text
+        if (!url) {
+          renderVerificationData(FALLBACK_DATA);
+          return;
+        }
+
+        const controller = new AbortController();
+        const timeoutId = window.setTimeout(function () {
+          controller.abort();
+        }, FETCH_TIMEOUT_MS);
+
+        try {
+          const response = await fetch(url, {
+            method: 'GET',
+            cache: 'no-store',
+            signal: controller.signal
+          });
+
+          if (!response.ok) {
+            throw new Error('HTTP status ' + response.status);
+          }
+
+          const csvText = await response.text();
+          const parsedRows = parseCSV(csvText);
+          const extracted = extractVerificationData(parsedRows);
+
+          if (extracted) {
+            renderVerificationData(extracted);
+          } else {
+            console.warn('[verifikasi.semekar.com] CSV format did not match expected 3 fields; using fallback data.');
+            renderVerificationData(FALLBACK_DATA);
+          }
+        } catch (error) {
+          console.warn('[verifikasi.semekar.com] Unable to load Google Sheets CSV; using fallback data.', error);
+          renderVerificationData(FALLBACK_DATA);
+        } finally {
+          window.clearTimeout(timeoutId);
+        }
+      }
+
+      // Initialize once DOM is ready
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', loadFromGoogleSheet);
+      } else {
+        loadFromGoogleSheet();
+      }
+    })();
+  </script>
+</body>
+</html>
